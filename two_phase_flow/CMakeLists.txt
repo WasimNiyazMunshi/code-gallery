@@ -26,9 +26,9 @@ SET(TARGET_SRC
 
 # Usually, you will not need to modify anything beyond this point...
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.3.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.13.4)
 
-FIND_PACKAGE(deal.II 9.5
+FIND_PACKAGE(deal.II 9.5.0
   HINTS ${deal.II_DIR} ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR}
   )
 IF(NOT ${deal.II_FOUND})
@@ -42,15 +42,15 @@ ENDIF()
 #
 # Are all dependencies fulfilled?
 #
-IF(NOT (DEAL_II_WITH_PETSC OR DEAL_II_WITH_TRILINOS) OR NOT DEAL_II_WITH_P4EST)
+IF(NOT DEAL_II_WITH_PETSC OR NOT DEAL_II_WITH_P4EST)
   MESSAGE(FATAL_ERROR "
-Error! The deal.II library found at ${DEAL_II_PATH} was not configured with
+Error! This program requires a deal.II library that was configured with the following options:
     DEAL_II_WITH_PETSC = ON
     DEAL_II_WITH_P4EST = ON
-or
-    DEAL_II_WITH_TRILINOS = ON
-    DEAL_II_WITH_P4EST = ON
-One or both of these combinations are OFF in your installation but at least one is required for this tutorial step."
+However, the deal.II library found at ${DEAL_II_PATH} was configured with these options:
+    DEAL_II_WITH_PETSC = ${DEAL_II_WITH_PETSC}
+    DEAL_II_WITH_P4EST = ${DEAL_II_WITH_P4EST}
+This conflicts with the requirements."
     )
 ENDIF()
 

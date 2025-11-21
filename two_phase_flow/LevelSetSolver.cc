@@ -444,7 +444,11 @@ void LevelSetSolver<dim>::setup()
   // INIT CONSTRAINTS //
   //////////////////////
   constraints.clear ();
+#if DEAL_II_VERSION_GTE(9, 6, 0)
+  constraints.reinit (locally_owned_dofs_LS, locally_relevant_dofs_LS);
+#else
   constraints.reinit (locally_relevant_dofs_LS);
+#endif
   DoFTools::make_hanging_node_constraints (dof_handler_LS, constraints);
   constraints.close ();
   /////////////////////////
@@ -1520,7 +1524,7 @@ void LevelSetSolver<dim>::solve(const AffineConstraints<double> &constraints,
 {
   // all vectors are NON-GHOSTED
   SolverControl solver_control (dof_handler_LS.n_dofs(), solver_tolerance);
-  PETScWrappers::SolverCG solver(solver_control, mpi_communicator);
+  PETScWrappers::SolverCG solver(solver_control);
   constraints.distribute (completely_distributed_solution);
   solver.solve (Matrix, completely_distributed_solution, rhs, *preconditioner);
   constraints.distribute (completely_distributed_solution);
